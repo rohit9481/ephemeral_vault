@@ -406,25 +406,6 @@ SELECT * FROM session_analytics;
 
 The Ephemeral Vault System successfully enables gasless high-frequency trading while maintaining robust security through limited delegation, encrypted key storage, and automatic fund returns.
 
-Thank you for watching!"
-
-## 🤝 Contributing
-
-Contributions welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) first.
-
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](./LICENSE) file.
-
-## 👥 Team
-
-Built by [Your Name] for GoQuant
-
-## 📧 Contact
-
-- Email: careers@goquant.io
-- CC: himanshu.vairagade@goquant.io
-
 ## 🙏 Acknowledgments
 
 - Solana Foundation for blockchain infrastructure
