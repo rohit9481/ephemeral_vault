@@ -222,7 +222,7 @@ cargo bench
 
 ### Part 1: Introduction (2 minutes)
 
-**[Screen: Title slide]**
+**[Screen: Iam Rohit Y]**
 
 "Welcome to the Ephemeral Vault System demonstration. I'm going to show you how we've built a secure, scalable solution for gasless trading on Solana that enables users to execute hundreds of transactions without manual signing."
 
