@@ -1,0 +1,25 @@
+[features]
+seeds = false
+skip-lint = false
+
+[programs.localnet]
+ephemeral_vault = "EphVau1t1111111111111111111111111111111111"
+
+[programs.devnet]
+ephemeral_vault = "EphVau1t1111111111111111111111111111111111"
+
+[programs.mainnet]
+ephemeral_vault = "YOUR_MAINNET_PROGRAM_ID"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[test]
+startup_wait = 10000

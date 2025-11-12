@@ -1,0 +1,44 @@
+[server]
+host = "0.0.0.0"
+port = 8080
+workers = 4
+max_connections = 1000
+
+[database]
+url = "postgresql://vault_user:password@localhost:5432/ephemeral_vault"
+max_connections = 20
+min_connections = 5
+connection_timeout_secs = 30
+
+[solana]
+rpc_url = "https://api.devnet.solana.com"
+ws_url = "wss://api.devnet.solana.com"
+commitment = "confirmed"
+timeout_secs = 30
+
+[security]
+encryption_key_path = "/etc/vault/encryption.key"
+session_max_duration = 86400  # 24 hours in seconds
+max_deposit_per_session = 100000000  # 0.1 SOL in lamports
+max_deposit_per_transaction = 10000000  # 0.01 SOL
+
+[rate_limits]
+session_create_per_hour = 10
+deposit_per_hour = 100
+trade_per_minute = 1000
+
+[monitoring]
+cleanup_interval_secs = 300  # 5 minutes
+alert_check_interval_secs = 60
+low_balance_threshold = 5000000  # 0.005 SOL
+expiry_warning_secs = 300  # 5 minutes before expiry
+
+[performance]
+transaction_timeout_secs = 30
+max_retries = 3
+retry_delay_ms = 500
+batch_size = 100
+
+[logging]
+level = "info"
+format = "json"

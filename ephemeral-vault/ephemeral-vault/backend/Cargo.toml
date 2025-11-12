@@ -1,0 +1,53 @@
+[package]
+name = "ephemeral-vault-backend"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ephemeral-vault-backend"
+path = "src/main.rs"
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["ws", "macros"] }
+tower = { version = "0.4", features = ["full"] }
+tower-http = { version = "0.5", features = ["cors", "trace", "compression"] }
+tokio = { version = "1.35", features = ["full"] }
+hyper = { version = "1.0", features = ["full"] }
+
+# Database
+sqlx = { version = "0.7", features = [
+    "postgres",
+    "runtime-tokio-rustls",
+    "macros",
+    "chrono",
+    "migrate"
+] }
+
+# Solana
+anchor-client = "0.29"
+anchor-lang = "0.29"
+solana-sdk = "1.17"
+solana-client = "1.17"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Cryptography
+aes-gcm = "0.10"
+rand = "0.8"
+hex = "0.4"
+
+# Utilities
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.6", features = ["v4", "serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1.0"
+thiserror = "1.0"
+dotenv = "0.15"
+config = "0.13"
+
+[dev-dependencies]
+reqwest = { version = "0.11", features = ["json"] }

@@ -1,0 +1,34 @@
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Anchor
+.anchor/
+test-ledger/
+
+# IDL
+*.so
+*.node
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Keys (IMPORTANT - never commit keys!)
+*.key
+*.pem
+id.json

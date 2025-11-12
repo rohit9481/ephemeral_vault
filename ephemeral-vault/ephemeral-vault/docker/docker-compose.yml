@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ephemeral_vault
+      POSTGRES_USER: vault_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vault_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vault-network
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      DATABASE_URL: postgresql://vault_user:${DB_PASSWORD:-password}@postgres:5432/ephemeral_vault
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.devnet.solana.com}
+      PROGRAM_ID: ${PROGRAM_ID}
+      RUST_LOG: ${LOG_LEVEL:-info}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../backend/config.toml:/etc/vault/config.toml:ro
+      - vault_keys:/etc/vault
+    restart: unless-stopped
+    networks:
+      - vault-network
+
+  # Optional: PgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@vault.local
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - vault-network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+  vault_keys:
+
+networks:
+  vault-network:
+    driver: bridge

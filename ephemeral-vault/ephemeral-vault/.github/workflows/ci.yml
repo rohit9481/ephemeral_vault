@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+  SOLANA_VERSION: '1.17.0'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ephemeral_vault_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+    
+    - name: Install Solana
+      run: |
+        sh -c "$(curl -sSfL https://release.solana.com/v${SOLANA_VERSION}/install)"
+        echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+    
+    - name: Install Anchor
+      run: |
+        cargo install --git https://github.com/coral-xyz/anchor --tag v0.29.0 anchor-cli --locked
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    
+    - name: Run Anchor tests
+      run: anchor test
+    
+    - name: Run backend tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ephemeral_vault_test
+      run: |
+        cd backend
+        cargo test --all-features
+    
+    - name: Run clippy
+      run: cargo clippy --all-targets --all-features -- -D warnings
+    
+    - name: Check formatting
+      run: cargo fmt -- --check
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build Docker image
+      run: docker build -f docker/Dockerfile -t ephemeral-vault:${{ github.sha }} .
+    
+    - name: Test Docker image
+      run: |
+        docker-compose -f docker/docker-compose.yml up -d
+        sleep 10
+        curl -f http://localhost:8080/health || exit 1
+        docker-compose -f docker/docker-compose.yml down
